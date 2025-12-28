@@ -9,13 +9,7 @@ import os
 import re
 import pandas as pd
 
-INPUT_PATH = "Rice_Crop_Data_challenge.csv"
-MAP_PATH   = "unicrop_feature_mapping.csv"
-OUTPUT_PATH = "./"+INPUT_PATH.split(".")[0]+"_output"
-
-OUT_CLEANED_INPUT   = "cleaned_input_table.csv"
-OUT_CLEANED_MAPPING = "cleaned_feature_mapping.csv"
-OUT_FETCH_PLAN      = "fetch_plan.csv"
+from source_codes.paths import INPUT_PATH, OUTPUT_PATH, MAP_PATH, OUT_CLEANED_INPUT, OUT_CLEANED_MAPPING, OUT_FETCH_PLAN, FIGURES_PATH
 
 WINDOW_MONTHS = None      # ← change to 1, 2, ... (calendar months, not rolling days)
 WINDOW_MODE   = "last"    # "last" → last N calendar months; "first" → first N months
@@ -87,7 +81,6 @@ if harv_col is None:
 
 # parse harvest date IN-PLACE (we keep the original column)
 df_in[harv_col] = pd.to_datetime(df_in[harv_col], errors="coerce", dayfirst=True)
-
 # locate lat / lon
 lat_col = _find_first(df_in, ["lat"])
 lon_col = _find_first(df_in, ["lon"])
@@ -97,12 +90,7 @@ if lat_col is None or lon_col is None:
 # add standardized key copies (keep originals too)
 df_in["latitude"]  = pd.to_numeric(df_in[lat_col], errors="coerce")
 df_in["longitude"] = pd.to_numeric(df_in[lon_col], errors="coerce")
-
-# drop any exact 'date' column (if present) that isn't the harvest column (keeps table clean)
-drop_exact_date_cols = [c for c in df_in.columns if c.strip().lower() == "date" and c != harv_col]
-df_in.drop(columns=drop_exact_date_cols, inplace=True, errors="ignore")
-
-# filter out rows without valid coordinates, but KEEP ALL original columns
+# # filter out rows without valid coordinates, but KEEP ALL original columns
 df_in = df_in.dropna(subset=["latitude","longitude"]).copy()
 
 # -------- 3) Keep LAST/FIRST N CALENDAR MONTHS + chronological order (optional)
@@ -211,9 +199,9 @@ print(f"M_map (unique mapping rows): {M_map}")
 print(f"Expected rows (N_in × M_map): {N_in * M_map}")
 
 # Import the UniCropPipeline class (assuming it's in pipeline.py)
-from pipeline import UniCropPipeline
-from modeller import UniCropModeler
-from modeller import ModelConfig
+from source_codes.pipeline import UniCropPipeline
+from source_codes.modeller import UniCropModeler
+from source_codes.config import ModelConfig
 
 data_filepath = OUTPUT_PATH+"/unicrop_master_timeseries.csv"
 
@@ -221,11 +209,11 @@ if not os.path.exists(data_filepath):
     print(f"Error: Data file not found at '{data_filepath}'")
     print("Data will be downloaded!...")
     # Instantiate and run data downloading step
-    unicrop = UniCropPipeline(project_id='glass-arcade-366520')  # Replace with your GEE project ID
+    unicrop = UniCropPipeline()  # Replace with your GEE project ID
     unicrop.config.output_dir = OUTPUT_PATH
     os.makedirs(OUTPUT_PATH, exist_ok=True)
     merged_df = unicrop.run_all(
-        fetch_plan_path="fetch_plan.csv",
+        fetch_plan_path=OUT_FETCH_PLAN,
         f_name_suffix="trial",
         master_timeseries_csv="unicrop_master_timeseries.csv",
         columns_manifest_csv="unicrop_columns_manifest.csv"
@@ -254,181 +242,174 @@ else:
         _ = modeler.generate_final_report()
 
         print("\n🎉 UniCrop Modeling Complete!")
-        # ------------------------------------------------------------
-        # SAVE VISUALISATION DATA FOR NOTEBOOK (Figures E, F, H, I)
-        # ------------------------------------------------------------
-        import json
-        import pickle
-        import numpy as np
-
-        print("\n💾 Saving visualisation data...")
-
-        df_vis = df_eng.copy()
-
-        # ---------------------------------------------
-        # 1. Detect target column
-        # ---------------------------------------------
-        target_col = None
-        for c in df_vis.columns:
-            if "yield" in c.lower():
-                target_col = c
-                break
-
-        if target_col is None:
-            raise ValueError("❌ Could not detect target (yield) column.")
-
-        y_true = df_vis[target_col].values
-
-        # ---------------------------------------------
-        # 2. Restore coordinates
-        # ---------------------------------------------
-        lat_candidates = [c for c in df.columns if "lat" in c.lower()]
-        lon_candidates = [c for c in df.columns if "lon" in c.lower()]
-
-        lat_col = lat_candidates[0]
-        lon_col = lon_candidates[0]
-
-        df_vis[lat_col] = df[lat_col]
-        df_vis[lon_col] = df[lon_col]
-
-        # ---------------------------------------------
-        # 3. Restore season as categorical variable
-        # ---------------------------------------------
-        season_candidates = [c for c in df.columns if "season" in c.lower()]
-        season_col = None
-
-        if season_candidates:
-            season_flag = season_candidates[0]
-
-            # Step 1: Extract raw values
-            raw = df[season_flag]
-
-            # Step 2: Convert possible string booleans to real booleans
-            raw_bool = raw.map({
-                True: True,
-                False: False,
-                "True": True,
-                "False": False,
-                "true": True,
-                "false": False,
-                1: True,
-                0: False
-            })
-
-            # If no conversion happened, fallback to heuristic:
-            if raw_bool.isna().all():
-                # values might be integers or mixed
-                raw_bool = raw.apply(lambda x: True if x in [1, "1", "WS"] else False)
-
-            # Step 3: Convert booleans into readable seasons
-            df_vis["season"] = raw_bool.map({
-                True: "Winter–Spring",
-                False: "Summer–Autumn"
-            })
-
-            season_col = "season"
-
-        # ---------------------------------------------
-        # 4. Restore district as categorical variable
-        # ---------------------------------------------
-        district_cols = [c for c in df.columns if "district" in c.lower()]
-        district_col = None
-
-        if district_cols:
-            def get_district(row):
-                for c in district_cols:
-                    if row[c] is True:
-                        return c.replace("fp_District_", "")
-                return "Other"
-
-
-            df_vis["district"] = df.apply(get_district, axis=1)
-            district_col = "district"
-
-        # ---------------------------------------------
-        # 5. Rebuild ENSEMBLE predictions
-        # ---------------------------------------------
-        print("🔧 Rebuilding ensemble predictions...")
-        base_models = {}
-        for k in ['LightGBM_full', 'RandomForest_full', 'SVM_full', 'ElasticNet_full']:
-            if k in modeler.models:
-                base_models[k.replace('_full', '')] = modeler.models[k]
-        model_dict = base_models
-        weights = modeler.artifacts["ensemble_weights"]
-
-        # Ensure arrays line up
-        X_vis = df_vis[modeler.selected_features].values
-
-        preds = {}
-
-        for mname in ["LightGBM", "RandomForest", "SVM", "ElasticNet"]:
-            preds[mname] = model_dict[mname].predict(X_vis)
-
-        # Weighted ensemble
-        y_pred = (
-                weights["LightGBM"] * preds["LightGBM"] +
-                weights["RandomForest"] * preds["RandomForest"] +
-                weights["SVM"] * preds["SVM"] +
-                weights["ElasticNet"] * preds["ElasticNet"]
-        )
-
-        df_vis["y_pred"] = y_pred
-        df_vis["residuals"] = y_pred - y_true
-
-        # ---------------------------------------------
-        # 6. Build dictionary for saving
-        # ---------------------------------------------
-        visual_dict = {
-            "df": df_vis,
-            "y_true": y_true,
-            "y_pred": y_pred,
-            "residuals": df_vis["residuals"].values,
-            "selected_features": modeler.selected_features,
-            "feature_families": modeler.artifacts["eda_results"]["feature_families"],
-            "lat_col": lat_col,
-            "lon_col": lon_col,
-            "season_col": season_col,
-            "district_col": district_col,
-            "target_column": target_col,
-            "best_model_name": "Ensemble",
-            "ensemble_weights": weights,
-        }
-
-        # ---------------------------------------------
-        # 7. Save PKL / CSV / JSON
-        # ---------------------------------------------
-        VIS_PATH = "unicrop_visualisation_data.pkl"
-        CSV_PATH = "unicrop_visualisation_data.csv"
-        META_PATH = "unicrop_visualisation_metadata.json"
-
-        with open(VIS_PATH, "wb") as f:
-            pickle.dump(visual_dict, f)
-
-        df_vis.to_csv(CSV_PATH, index=False)
-
-        metadata = {
-            "lat_column": lat_col,
-            "lon_column": lon_col,
-            "target_column": target_col,
-            "prediction_column": "y_pred",
-            "season_column": season_col,
-            "district_column": district_col,
-            "selected_features": modeler.selected_features,
-            "feature_families": modeler.artifacts["eda_results"]["feature_families"],
-            "ensemble_weights": weights
-        }
-
-        with open(META_PATH, "w") as f:
-            json.dump(metadata, f, indent=4)
-
-        print("🎉 Visualisation data saved successfully!")
-        print(f"   • {VIS_PATH}")
-        print(f"   • {CSV_PATH}")
-        print(f"   • {META_PATH}")
+        # # ------------------------------------------------------------
+        # # SAVE VISUALISATION DATA FOR NOTEBOOK (Figures E, F, H, I)
+        # # ------------------------------------------------------------
+        # import json
+        # import pickle
+        # import numpy as np
+        #
+        # print("\n💾 Saving visualisation data...")
+        #
+        # df_vis = df_eng.copy()
+        #
+        # # ---------------------------------------------
+        # # 1. Detect target column
+        # # ---------------------------------------------
+        # target_col = modeler.config.target_col
+        #
+        # y_true = df_vis[target_col].values
+        #
+        # # ---------------------------------------------
+        # # 2. Restore coordinates
+        # # ---------------------------------------------
+        # lat_candidates = [c for c in df.columns if "lat" in c.lower()]
+        # lon_candidates = [c for c in df.columns if "lon" in c.lower()]
+        #
+        # lat_col = lat_candidates[0]
+        # lon_col = lon_candidates[0]
+        #
+        # df_vis[lat_col] = df[lat_col]
+        # df_vis[lon_col] = df[lon_col]
+        #
+        # # ---------------------------------------------
+        # # 3. Restore season as categorical variable
+        # # ---------------------------------------------
+        # season_candidates = [c for c in df.columns if "season" in c.lower()]
+        # season_col = None
+        #
+        # if season_candidates:
+        #     season_flag = season_candidates[0]
+        #
+        #     # Step 1: Extract raw values
+        #     raw = df[season_flag]
+        #
+        #     # Step 2: Convert possible string booleans to real booleans
+        #     raw_bool = raw.map({
+        #         True: True,
+        #         False: False,
+        #         "True": True,
+        #         "False": False,
+        #         "true": True,
+        #         "false": False,
+        #         1: True,
+        #         0: False
+        #     })
+        #
+        #     # If no conversion happened, fallback to heuristic:
+        #     if raw_bool.isna().all():
+        #         # values might be integers or mixed
+        #         raw_bool = raw.apply(lambda x: True if x in [1, "1", "WS"] else False)
+        #
+        #     # Step 3: Convert booleans into readable seasons
+        #     df_vis["season"] = raw_bool.map({
+        #         True: "Winter–Spring",
+        #         False: "Summer–Autumn"
+        #     })
+        #
+        #     season_col = "season"
+        #
+        # # ---------------------------------------------
+        # # 4. Restore district as categorical variable
+        # # ---------------------------------------------
+        # district_cols = [c for c in df.columns if "district" in c.lower()]
+        # district_col = None
+        #
+        # if district_cols:
+        #     def get_district(row):
+        #         for c in district_cols:
+        #             if row[c] is True:
+        #                 return c.replace("fp_District_", "")
+        #         return "Other"
+        #
+        #
+        #     df_vis["district"] = df.apply(get_district, axis=1)
+        #     district_col = "district"
+        #
+        # # ---------------------------------------------
+        # # 5. Rebuild ENSEMBLE predictions
+        # # ---------------------------------------------
+        # print("🔧 Rebuilding ensemble predictions...")
+        # base_models = {}
+        # for k in ['LightGBM_full', 'RandomForest_full', 'SVM_full', 'ElasticNet_full']:
+        #     if k in modeler.models:
+        #         base_models[k.replace('_full', '')] = modeler.models[k]
+        # model_dict = base_models
+        # weights = modeler.artifacts["ensemble_weights"]
+        #
+        # # Ensure arrays line up
+        # X_vis = df_vis[modeler.selected_features].values
+        #
+        # preds = {}
+        #
+        # for mname in ["LightGBM", "RandomForest", "SVM", "ElasticNet"]:
+        #     preds[mname] = model_dict[mname].predict(X_vis)
+        #
+        # # Weighted ensemble
+        # y_pred = (
+        #         weights["LightGBM"] * preds["LightGBM"] +
+        #         weights["RandomForest"] * preds["RandomForest"] +
+        #         weights["SVM"] * preds["SVM"] +
+        #         weights["ElasticNet"] * preds["ElasticNet"]
+        # )
+        #
+        # df_vis["y_pred"] = y_pred
+        # df_vis["residuals"] = y_pred - y_true
+        #
+        # # ---------------------------------------------
+        # # 6. Build dictionary for saving
+        # # ---------------------------------------------
+        # visual_dict = {
+        #     "df": df_vis,
+        #     "y_true": y_true,
+        #     "y_pred": y_pred,
+        #     "residuals": df_vis["residuals"].values,
+        #     "selected_features": modeler.selected_features,
+        #     "feature_families": modeler.artifacts["eda_results"]["feature_families"],
+        #     "lat_col": lat_col,
+        #     "lon_col": lon_col,
+        #     "season_col": season_col,
+        #     "district_col": district_col,
+        #     "target_column": target_col,
+        #     "best_model_name": "Ensemble",
+        #     "ensemble_weights": weights,
+        # }
+        #
+        # # ---------------------------------------------
+        # # 7. Save PKL / CSV / JSON
+        # # ---------------------------------------------
+        # VIS_PATH = OUTPUT_PATH+"/unicrop_visualisation_data.pkl"
+        # CSV_PATH = OUTPUT_PATH+"/unicrop_visualisation_data.csv"
+        # META_PATH = OUTPUT_PATH+"/unicrop_visualisation_metadata.json"
+        #
+        # with open(VIS_PATH, "wb") as f:
+        #     pickle.dump(visual_dict, f)
+        #
+        # df_vis.to_csv(CSV_PATH, index=False)
+        #
+        # metadata = {
+        #     "lat_column": lat_col,
+        #     "lon_column": lon_col,
+        #     "target_column": target_col,
+        #     "prediction_column": "y_pred",
+        #     "season_column": season_col,
+        #     "district_column": district_col,
+        #     "selected_features": modeler.selected_features,
+        #     "feature_families": modeler.artifacts["eda_results"]["feature_families"],
+        #     "ensemble_weights": weights
+        # }
+        #
+        # with open(META_PATH, "w") as f:
+        #     json.dump(metadata, f, indent=4)
+        #
+        # print("🎉 Visualisation data saved successfully!")
+        # print(f"   • {VIS_PATH}")
+        # print(f"   • {CSV_PATH}")
+        # print(f"   • {META_PATH}")
 
         print("=" * 60)
         print("Generated files:")
-        print("  📊 Figures: unicrop_figures1/ (01a.., 02a.., 03_*, 04a.., 05a.., 05e, 06a.., 07.., 08.., 09*)")
+        print("  📊 Figures: unicrop_figures/ (01a.., 02a.., 03_*, 04a.., 05a.., 05e, 06a.., 07.., 08.., 09*)")
         print("  🤖 Artifacts: unicrop_model_artifacts1.pkl")
         print("  🔮 Prediction function: predict_crop_yield.py")
         print("  📋 Final report: unicrop_final_report.md")

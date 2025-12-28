@@ -11,7 +11,7 @@ def predict_crop_yield(df_raw):
     import pickle
     import os
 
-    path = 'unicrop_model_artifacts1.pkl'
+    path = '../unicrop_model_artifacts1.pkl'
     if not os.path.exists(path):
         raise FileNotFoundError("Missing artifacts file: unicrop_model_artifacts1.pkl")
 

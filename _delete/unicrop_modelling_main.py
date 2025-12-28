@@ -1,6 +1,6 @@
 # unicrop_model_main.py
 
-from pipeline import run_modelling_after_download
+from source_codes.pipeline import run_modelling_after_download
 
 if __name__ == "__main__":
     results = run_modelling_after_download(

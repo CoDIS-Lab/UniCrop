@@ -4,6 +4,57 @@ from dataclasses import dataclass, field
 from typing import List, Dict
 
 @dataclass
+class ModelConfig:
+    """Configuration class for model parameters"""
+    target_col: str = 'fp_yield (kg / ha)'#'fp_Rice Yield (kg/ha)'
+    group_cols: List[str] = None
+    test_size: float = 0.2
+    cv_folds: int = 5
+    random_state: int = 10000291
+    min_features: int = 15  # exact number of features to keep
+    cat_cols: List[str] = field(default_factory=lambda: ['fp_Area', 'fp_Season',
+                                                         'fp_Intensity'])
+    season_col: str = 'fp_Season'
+    district_col: str = 'fp_Harvest Area'
+    def __post_init__(self):
+        if self.group_cols is None:
+            # self.group_cols = ['fp_District', 'fp_Season(SA = Summer Autumn, WS = Winter Spring)']
+            self.group_cols = ['fp_Area', 'fp_Season']
+
+@dataclass
+class UniCropConfig:
+    """Configuration class for the main UniCrop pipeline."""
+
+    # Suffix for file names
+    f_name_suffix: str = "trial"
+
+    # GEE settings
+    project_id: str = 'glass-arcade-366520'
+
+    # Output directory
+    output_dir: str = './outputs'
+
+    # Fetch plan metadata inclusion
+    include_mapping_meta: bool = False
+
+    # Priority columns for fetch plan metadata
+    priority_columns: List[str] = field(default_factory=lambda: [
+        "fp_Harvest Date",#"fp_Date of Harvest",
+        "fp_Area",#"fp_District",
+        "fp_Latitude",
+        "fp_Longitude",
+        "fp_Season",#"fp_Season(SA = Summer Autumn, WS = Winter Spring)",
+        "fp_Intensity",#"fp_Rice Crop Intensity(D=Double, T=Triple)",
+        "fp_Harvest Area",#"fp_Field size (ha)",
+        "fp_yield (kg / ha)"#"fp_Rice Yield (kg/ha)",
+    ])
+
+
+
+
+
+
+@dataclass
 class NASAConfig:
     """Configuration class for NASA POWER data pipeline parameters."""
 
@@ -249,63 +300,3 @@ class SoilGridsConfig:
         'ocd_0-5cm_mean', 'phh2o_0-5cm_mean', 'nitrogen_0-5cm_mean', 'cec_0-5cm_mean', 'cfvo_0-5cm_mean'
     ])
 
-# @dataclass
-# class Sentinel3Config:
-#     """Configuration class for Sentinel-3 GEE pipeline parameters."""
-#     buffer_m: int = 600
-#     scale: int = 300  # OLCI resolution
-#     window_days: int = 25
-#     max_pixels: float = 1e9
-#     best_effort: bool = True
-#     tile_scale: int = 4
-#     datasets: Dict[str, str] = field(default_factory=lambda: {
-#         'olci': 'COPERNICUS/S3/OLCI',
-#         'slstr': 'COPERNICUS/S3/SLSTR'
-#     })
-#     valid_bands: List[str] = field(default_factory=lambda: [
-#         'Oa01_radiance', 'Oa02_radiance', 'Oa03_radiance', 'Oa04_radiance', 'Oa05_radiance',
-#         'Oa06_radiance', 'Oa07_radiance', 'Oa08_radiance', 'Oa09_radiance', 'Oa10_radiance',
-#         'Oa11_radiance', 'Oa12_radiance', 'Oa13_radiance', 'Oa14_radiance', 'Oa15_radiance',
-#         'Oa16_radiance', 'Oa17_radiance', 'Oa18_radiance', 'Oa19_radiance', 'Oa20_radiance',
-#         'Oa21_radiance', 'S7_brightness_temperature_an', 'quality_flags'
-#     ])
-#     band_aliases: Dict[str, str] = field(default_factory=lambda: {
-#         'ndvi': 'NDVI', 'lst': 'S7_brightness_temperature_an',
-#         'ndre': 'NDRE', 'cirededge': 'CIrededge',  # Redirect to S2
-#         'fapar': 'FAPAR', 'otci': 'OTCI', 'water_vapor': 'water_vapor'  # Warn if requested
-#     })
-#     statistics: List[str] = field(default_factory=lambda: ['mean', 'stdDev', 'min', 'max'])
-#     dataset_patterns: List[str] = field(default_factory=lambda: [
-#         r'sentinel-3', r's3', r'olci', r'slstr', r'copernicus/s3', r'sentinel3'
-#     ])
-#     default_output_file: str = 'Sentinel3_Data_Timeseries.csv'
-#     auto_create_plan: bool = True
-#     auto_plan_suffix: str = '_s3_auto.csv'
-
-@dataclass
-class UniCropConfig:
-    """Configuration class for the main UniCrop pipeline."""
-
-    # Suffix for file names
-    f_name_suffix: str = "trial"
-
-    # GEE settings
-    project_id: str = 'unicrop-466421'
-
-    # Output directory
-    output_dir: str = './outputs'
-
-    # Fetch plan metadata inclusion
-    include_mapping_meta: bool = False
-
-    # Priority columns for fetch plan metadata
-    priority_columns: List[str] = field(default_factory=lambda: [
-        "fp_Date of Harvest",
-        "fp_District",
-        "fp_Latitude",
-        "fp_Longitude",
-        "fp_Season(SA = Summer Autumn, WS = Winter Spring)",
-        "fp_Rice Crop Intensity(D=Double, T=Triple)",
-        "fp_Field size (ha)",
-        "fp_Rice Yield (kg/ha)",
-    ])

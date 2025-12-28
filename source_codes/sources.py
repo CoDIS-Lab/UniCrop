@@ -11,7 +11,7 @@ from typing import Dict, List, Optional, Tuple, Callable
 from datetime import timedelta, datetime
 import ee
 import os
-from config import *
+from source_codes.config import *
 from sklearn.feature_selection import mutual_info_regression
 from sklearn.preprocessing import StandardScaler
 from sklearn.impute import SimpleImputer
