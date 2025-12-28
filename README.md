@@ -51,20 +51,34 @@ All required environmental variables are defined in a human-readable **feature m
 unicrop/
 │
 ├── unicrop_main.py # Main pipeline execution script
-├── pipeline.py # Data acquisition and harmonisation
-├── modeller.py # Feature engineering, selection, modelling
-├── config.py # Pipeline and model configuration
 │
-├── unicrop_feature_mapping.csv # Declarative feature specification
-├── Rice_Crop_Data_challenge.csv # Example input dataset
+├── source_codes/
+│ ├── pipeline.py # Data acquisition and harmonisation
+│ ├── modeller.py # Feature engineering, selection, modelling
+│ ├── config.py # Pipeline and model configuration
+│ ├── paths.py # Folder details for data, sources, etc.
+│ └── sources.py # Additional source codes
 │
-├── output/
-│ ├── fetch_plan.csv
+├── data/
+│ └── sample_data.csv
+│
+├── source_files/
+│ ├── cleaned_feature_mapping.csv # Declarative feature specification
+│ ├── cleaned_input_table.csv
+│ ├── unicrop_feature_mapping.csv
+│ └── fetch_plan.csv
+│
+├── sample_data_output/
 │ ├── unicrop_master_timeseries.csv
 │ ├── unicrop_columns_manifest.csv
 │ ├── unicrop_model_artifacts1.pkl
-│ └── unicrop_visualisation_data.pkl
+│ ├── unicrop_figures/
+│ ├── unicrop_final_report.md
+│ ├── unicrop_figures/ # Folder storing figures saved from sample_data.csv modelling
+│ │ └── ...
 │
+├── USER MANUAL.md
+├── SAMPLE DATA CASE STUDY.md
 └── README.md
 ```
 
