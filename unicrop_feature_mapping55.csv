@@ -1,0 +1,44 @@
+Key Variable,API Parameter,Source Dataset,Dataset (GEE/NASA/Other),Detailed Notes (Calculation / Derivation)
+Aspect,aspect,SRTM (GEE),USGS/SRTMGL1_003,Derived from DEM using terrain() function in Google Earth Engine.
+ET (Evapotranspiration),ET,MOD16A2 (MODIS),MODIS/006/MOD16A2,Evapotranspiration (mm/day) from MODIS MOD16A2 dataset.
+EVI,Derived,Sentinel-2 (GEE),COPERNICUS/S2,EVI = 2.5 * (NIR - RED) / (NIR + 6*RED - 7.5*BLUE + 1) using Sentinel-2 bands.
+Elevation,elevation,SRTM (GEE),USGS/SRTMGL1_003,Elevation values in meters derived from the SRTM DEM dataset.
+Irrigation,Derived,ERA5-Land,ECMWF/ERA5_LAND/DAILY,"Irrigation = max(0, PEV - TP) estimated from precipitation and potential evapotranspiration."
+Total Precipitation,total_precipitation,ERA5-Land,ECMWF/ERA5_LAND/DAILY,"Total amount of precipitation (rain, snow, etc.) accumulated over a time step."
+Potential Evaporation,potential_evaporation,ERA5-Land,ECMWF/ERA5_LAND/DAILY,Amount of water that would evaporate and transpire if sufficient water were available (potential evapotranspiration).
+LAI,Derived,Sentinel-2 (GEE),COPERNICUS/S2,"LAI = 3.618 * NDVI - 0.118 (Weiss et al., 2007) calculated from Sentinel-2 NDVI."
+NDVI,Derived,Sentinel-2 (GEE),COPERNICUS/S2,NDVI = (NIR - RED) / (NIR + RED) using Sentinel-2 spectral bands.
+VH,VH_mean,Sentinel-1 (GEE),COPERNICUS/S1_GRD,"Plant height proxy derived from Sentinel-1 SAR backscatter measurements (VH, VV polarization)."
+VV,VV_mean,Sentinel-1 (GEE),COPERNICUS/S1_GRD,"Plant height proxy derived from Sentinel-1 SAR backscatter measurements (VH, VV polarization)."
+Slope,slope,SRTM (GEE),USGS/SRTMGL1_003,Derived from DEM using slope function in GEE.
+Bulk Density (Oven Dry),bdod_0-5cm_mean,ISRIC,projects/soilgrids-isric/bdod_mean,Mass of dry soil per unit volume
+Soil Moisture,volumetric_soil_water_layer_1,ERA5-Land,ECMWF/ERA5_LAND/DAILY,Volumetric soil moisture in the top 0â€“10 cm layer (mÂ³/mÂ³).
+Soil Organic Carbon,ocd_0-5cm_mean,ISRIC,projects/soilgrids-isric/ocd_mean,Soil organic carbon content (g/kg) from SoilGrids dataset.
+Soil Organic Carbon,ocd_5-15cm_mean,ISRIC,projects/soilgrids-isric/ocd_mean,Soil organic carbon content (g/kg) from SoilGrids dataset.
+Soil Organic Carbon,ocd_15-30cm_mean,ISRIC,projects/soilgrids-isric/ocd_mean,Soil organic carbon content (g/kg) from SoilGrids dataset.
+Soil Temperature,soil_temperature_level_1,ERA5-Land,ECMWF/ERA5_LAND/HOURLY,Soil temperature at depth level 1 (Â°C).
+Soil Texture,sand_0-5cm_mean,ISRIC,projects/soilgrids-isric/sand_mean,"Percentage composition of sand, silt, and clay in the soil."
+Soil Texture,silt_0-5cm_mean,ISRIC,projects/soilgrids-isric/silt_mean,"Percentage composition of sand, silt, and clay in the soil."
+Soil Texture,clay_0-5cm_mean,ISRIC,projects/soilgrids-isric/clay_mean,"Percentage composition of sand, silt, and clay in the soil."
+Soil pH,phh2o_0-5cm_mean,ISRIC,projects/soilgrids-isric/phh2o_mean,Soil pH measured in Hâ‚‚O solution (0â€“5 cm).
+Soil Nitrogen,nitrogen_0-5cm_mean,ISRIC,projects/soilgrids-isric/nitrogen_mean,Amount of nitrogen in soil
+Solar Radiation,ALLSKY_SFC_SW_DWN,NASA POWER,NASA POWER,Downwelling shortwave radiation (MJ/mÂ²/day).
+Tavg,T2M,NASA POWER,NASA POWER,Mean daily temperature (Tmax + Tmin)/2 (Â°C).
+Tmax,T2M_MAX,NASA POWER,NASA POWER,Daily maximum temperature (Â°C).
+Tmin,T2M_MIN,NASA POWER,NASA POWER,Daily minimum temperature (Â°C).
+DTR,Derived,NASA POWER,NASA POWER,"Diurnal Temperature Range  DTR=Tmax−Tmin
+​
+"
+VPD,Derived,NASA POWER,NASA POWER,VPD = es(T) - ea(Td)   es(T) = 0.6108 * exp(17.27*T/(T+237.3))   (saturation vapor pressure in kPa) ea(Td) = 0.6108 * exp(17.27*Td/(Td+237.3)) (actual vapor pressure in kPa)
+Dew Point Temperature ,Derived,NASA POWER,NASA POWER,Dew Point Temperature at 2 meters (°C)
+Relative Humidity ,RH2M,NASA POWER,NASA POWER,RH2M stands for Relative Humidity at 2 meters above ground level (%).
+Wind Speed,WS2M,NASA POWER,NASA POWER,WindSpeed = sqrt(u10Â² + v10Â²) (m/s).
+fPAR,Fpar_500m,MODIS/061/MOD15A2H (MODIS),MODIS/061/MOD15A2H,"Fraction of absorbed photosynthetically active radiation, derived from Sentinel-2 surface reflectance."
+Skin Temperature,skin_temperature,ERA5-Land,ECMWF/ERA5_LAND/DAILY,Surface skin temperature from ERA5-Land.
+SAVI,Derived,Sentinel-2 (GEE),COPERNICUS/S2,Soil Adjusted Vegetation Index.
+NDRE (Red-Edge NDVI),Derived,Sentinel-2 (GEE),COPERNICUS/S3,"NDRE = (NIR − RedEdge) / (NIR + RedEdge). Sentinel-2 bands: NIR=B8 (or B8A), Red-Edge=B5/B6/B7. Sensitive to chlorophyll/N status, shown effective for sunflower yield mapping. "
+Chlorophyll Index Red-Edge (CIrededge),Derived,Sentinel-2 (GEE),COPERNICUS/S4,"CIre = (NIR / RedEdge) − 1 (e.g., B8/B5 − 1). Tracks canopy chlorophyll; robust for stress detection. "
+RVI (Radar Vegetation Index),Derived,Sentinel-1 (GEE),COPERNICUS/S1_GRD,"RVI = 4·VH / (VV + VH) from calibrated σº VV,VH. Useful SAR proxy for structure/biomass without optical data."
+Gross Primary Productivity (GPP),Gpp,MOD17A2H(MODIS),MODIS/061/MOD17A2H,MODIS GPP (500 m) cumulative 8-day product; photosynthetic productivity linked to yield.
+Vegetation Condition Index (VCI),Derived ,MOD13Q1(MODIS),MODIS/061/MOD13Q1,VCI = (NDVI_current – NDVI_min) / (NDVI_max – NDVI_min); helpful in monitoring sugarcane health and yield status ResearchGate
+S1 VV/VH ratio (linear σ⁰),Derived,Sentinel-1 (GEE),COPERNICUS/S1_GRD,"Compute from linear backscatter within the harvest window: VV_lin = 10^(VV_dB/10), VH_lin = 10^(VH_dB/10), VV/VH ratio = VV_lin / VH_lin. Useful for canopy structure/moisture."
