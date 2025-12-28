@@ -72,7 +72,6 @@ unicrop/
 │ ├── unicrop_master_timeseries.csv
 │ ├── unicrop_columns_manifest.csv
 │ ├── unicrop_model_artifacts1.pkl
-│ ├── unicrop_figures/
 │ ├── unicrop_final_report.md
 │ ├── unicrop_figures/ # Folder storing figures saved from sample_data.csv modelling
 │ │ └── ...
@@ -139,7 +138,6 @@ This will:
 Key outputs include:
  - `unicrop_master_timeseries.csv` --> Harmonised multi-source dataset before feature selection
  - `unicrop_model_artifacts1.pkl` --> Trained models, selected features, feature families, ensemble weights
- - `unicrop_visualisation_data.pkl` --> Pre-processed data for generating figures and diagnostics
  - `unicrop_final_report.md` --> Summary of modelling results
 
 ---
