@@ -1,0 +1,11 @@
+earthengine-api==1.5.24
+lightgbm==4.6.0
+matplotlib==3.9.1
+numpy==1.26.4
+pandas==2.2.2
+requests==2.32.3
+scikit-learn==1.6.1
+scipy==1.12.0
+seaborn==0.12.2
+shap==0.48.0
+
