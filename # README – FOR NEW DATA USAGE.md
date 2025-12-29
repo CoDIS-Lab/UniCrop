@@ -35,7 +35,7 @@ This file defines where UniCrop reads input data from and where outputs are writ
 
 Example:
 ```python
-DATASET_FILENAME = "maize_ES_with_latlon.csv"
+filename = "maize_ES_with_latlon.csv"
 ```
 
 UniCrop will automatically create other required folder structures. 
@@ -146,7 +146,10 @@ In this case, UniCrop:
   - NASA POWER (meteorological variables)
   - Sentinel-2 (spectral indices)
   - MODIS (vegetation, evapotranspiration, productivity)
+  - Sentinel-1 (radar reflection for different polarisations)
   - SRTM (terrain variables)
+  - ERA5 (Additional Meteorological variables)
+  - SoilGrids (Soil-related features)
 - Stores all downloaded and processed features in the dataset-specific folder
 
 After the download stage completes, the program **terminates automatically**.  
