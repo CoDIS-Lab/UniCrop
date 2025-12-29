@@ -47,7 +47,7 @@ All required environmental variables are defined in a human-readable **feature m
 ---
 
 ## 📂 Repository Structure
-```
+```text
 unicrop/
 │
 ├── unicrop_main.py # Main pipeline execution script
