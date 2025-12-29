@@ -51,6 +51,8 @@ All required environmental variables are defined in a human-readable **feature m
 unicrop/
 │
 ├── unicrop_main.py # Main pipeline execution script
+├── requirements.txt # Python package details
+├── requirements_optional.txt # Optional package imports
 ├── README - FOR NEW DATA USAGE.md
 │
 ├── source_codes/
@@ -77,7 +79,6 @@ unicrop/
 │ ├── unicrop_figures/ # Folder storing figures saved from sample_data.csv modelling
 │ │ └── ...
 │
-├── USER MANUAL.md
 └── README.md
 ```
 
@@ -122,7 +123,7 @@ Each row corresponds to one environmental variable.
 python unicrop_main.py
 ```
 
-This will:
+This will (for a new dataset):
  - Clean and validate field-level input data
  - Generate an automated fetch plan
  - Download and harmonise multi-source environmental data
@@ -130,6 +131,8 @@ This will:
  - Perform statistical screening and mRMR feature selection
  - Train baseline models and ensemble
  - Export modelling artefacts and visualisation data
+
+*Currently, the folders include downloaded data for the sample_data.csv. When users run the script above, it will bypass the steps above, and only run model performance and prediction stages.*
 
 ---
 
@@ -174,7 +177,7 @@ Nevertheless, the case study highlights UniCrop’s key strengths:
 
 ---
 
-## 📄 Related Publication
+## 📄 Related Publication and Citation
 
 If you use UniCrop in your research, please cite:
 
