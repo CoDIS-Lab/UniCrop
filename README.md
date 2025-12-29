@@ -123,16 +123,18 @@ Each row corresponds to one environmental variable.
 python unicrop_main.py
 ```
 
-This will (for a new dataset):
- - Clean and validate field-level input data
- - Generate an automated fetch plan
- - Download and harmonise multi-source environmental data
- - Engineer agronomic features
- - Perform statistical screening and mRMR feature selection
- - Train baseline models and ensemble
- - Export modelling artefacts and visualisation data
+This will:
+ - Downloading Stage (runs only ONCE for a new dataset)
+   - Clean and validate field-level input data
+   - Generate an automated fetch plan
+   - Download and harmonise multi-source environmental data
+   - Engineer agronomic features
+ - Modelling Stage
+   - Perform statistical screening and mRMR feature selection
+   - Train baseline models and ensemble
+   - Export modelling artefacts and visualisation data
 
-*Currently, the folders include downloaded data for the sample_data.csv. When users run the script above, it will bypass the steps above, and only run model performance and prediction stages.*
+*Currently, the folders include downloaded data for the `sample_data.csv`. When users run the script above, it will bypass **the Downloading Stage** above, and only run **the Modelling Stage** for performance and prediction outputs.*
 
 ---
 
