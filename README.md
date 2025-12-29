@@ -51,6 +51,7 @@ All required environmental variables are defined in a human-readable **feature m
 unicrop/
 │
 ├── unicrop_main.py # Main pipeline execution script
+├── README - FOR NEW DATA USAGE.md
 │
 ├── source_codes/
 │ ├── pipeline.py # Data acquisition and harmonisation
@@ -60,7 +61,6 @@ unicrop/
 │ └── sources.py # Additional source codes
 │
 ├── data/
-│ ├── SAMPLE DATA CASE STUDY.md
 │ └── sample_data.csv
 │
 ├── source_files/
