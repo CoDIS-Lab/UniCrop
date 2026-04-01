@@ -1,0 +1,9 @@
+_delete/
+.idea/
+.vscode/
+data/Crop_Location_Data.csv
+data/Rice_Crop_Data_challenge.csv
+Rice_Crop_Data_challenge_output
+source_codes/__pycache__/
+USER_MANUAL.md
+.DS_Store

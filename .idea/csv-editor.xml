@@ -3,13 +3,6 @@
   <component name="CsvFileAttributes">
     <option name="attributeMap">
       <map>
-        <entry key="/Rice_Crop_Data_challenge.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
         <entry key="/Rice_Crop_Data_challenge_output/ERA5_Data_trial.csv">
           <value>
             <Attribute>
@@ -45,35 +38,7 @@
             </Attribute>
           </value>
         </entry>
-        <entry key="/cleaned_input_table.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
         <entry key="/data/Rice_Crop_Data_challenge.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/fetch_plan.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/unicrop_feature_mapping.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/unicrop_visualisation_data.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
