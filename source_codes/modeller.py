@@ -837,7 +837,10 @@ class UniCropModeler:
         preprocessors_fold0 = {}
 
         # CV loop
+<<<<<<< HEAD
         selected_features_per_fold = []
+=======
+>>>>>>> 0e19d2eec8dc4acbb456bb6087f04c9bbc234e8d
         for fold, (tr_idx, va_idx) in enumerate(cv.split(df, df[target], groups)):
             print(f"  Processing fold {fold + 1}/{self.config.cv_folds}")
             dtr = df.iloc[tr_idx].copy()
@@ -852,7 +855,10 @@ class UniCropModeler:
 
             # Feature selection inside fold
             sel, _ = self.feature_selection(tr_proc)
+<<<<<<< HEAD
             selected_features_per_fold.append(list(sel))
+=======
+>>>>>>> 0e19d2eec8dc4acbb456bb6087f04c9bbc234e8d
             Xtr, ytr = tr_proc[sel], tr_proc[target]
             Xva, yva = va_proc[sel], va_proc[target]
 
@@ -907,6 +913,7 @@ class UniCropModeler:
             if fold == 0:
                 models['ElasticNet'] = enet
 
+<<<<<<< HEAD
         # Feature selection stability across folds
         from itertools import combinations
 
@@ -933,6 +940,8 @@ class UniCropModeler:
             print(f"    Min Jaccard similarity:  {np.min(jaccard_scores):.4f}")
             print(f"    Max Jaccard similarity:  {np.max(jaccard_scores):.4f}")
 
+=======
+>>>>>>> 0e19d2eec8dc4acbb456bb6087f04c9bbc234e8d
         # Aggregate metrics
         y_full = df[target]
         for name in oof:

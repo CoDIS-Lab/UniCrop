@@ -26,7 +26,9 @@ Solar Radiation,ALLSKY_SFC_SW_DWN,NASA POWER,NASA POWER,Downwelling shortwave ra
 Tavg,T2M,NASA POWER,NASA POWER,Mean daily temperature (Tmax + Tmin)/2 (Â°C).
 Tmax,T2M_MAX,NASA POWER,NASA POWER,Daily maximum temperature (Â°C).
 Tmin,T2M_MIN,NASA POWER,NASA POWER,Daily minimum temperature (Â°C).
-DTR,Derived,NASA POWER,NASA POWER,"Diurnal Temperature Range  DTR=Tmax-Tmin"
+DTR,Derived,NASA POWER,NASA POWER,"Diurnal Temperature Range  DTR=Tmax−Tmin
+​
+"
 VPD,Derived,NASA POWER,NASA POWER,VPD = es(T) - ea(Td)   es(T) = 0.6108 * exp(17.27*T/(T+237.3))   (saturation vapor pressure in kPa) ea(Td) = 0.6108 * exp(17.27*Td/(Td+237.3)) (actual vapor pressure in kPa)
 Dew Point Temperature ,Derived,NASA POWER,NASA POWER,Dew Point Temperature at 2 meters (°C)
 Relative Humidity ,RH2M,NASA POWER,NASA POWER,RH2M stands for Relative Humidity at 2 meters above ground level (%).
@@ -34,9 +36,9 @@ Wind Speed,WS2M,NASA POWER,NASA POWER,WindSpeed = sqrt(u10Â² + v10Â²) (m/s).
 fPAR,Fpar_500m,MODIS/061/MOD15A2H (MODIS),MODIS/061/MOD15A2H,"Fraction of absorbed photosynthetically active radiation, derived from Sentinel-2 surface reflectance."
 Skin Temperature,skin_temperature,ERA5-Land,ECMWF/ERA5_LAND/DAILY,Surface skin temperature from ERA5-Land.
 SAVI,Derived,Sentinel-2 (GEE),COPERNICUS/S2,Soil Adjusted Vegetation Index.
-NDRE (Red-Edge NDVI),Derived,Sentinel-2 (GEE),COPERNICUS/S3,"NDRE = (NIR - RedEdge) / (NIR + RedEdge). Sentinel-2 bands: NIR=B8 (or B8A), Red-Edge=B5/B6/B7. Sensitive to chlorophyll/N status, shown effective for sunflower yield mapping. "
-Chlorophyll Index Red-Edge (CIrededge),Derived,Sentinel-2 (GEE),COPERNICUS/S4,"CIre = (NIR / RedEdge) - 1 (e.g., B8/B5 - 1). Tracks canopy chlorophyll; robust for stress detection. "
+NDRE (Red-Edge NDVI),Derived,Sentinel-2 (GEE),COPERNICUS/S3,"NDRE = (NIR − RedEdge) / (NIR + RedEdge). Sentinel-2 bands: NIR=B8 (or B8A), Red-Edge=B5/B6/B7. Sensitive to chlorophyll/N status, shown effective for sunflower yield mapping. "
+Chlorophyll Index Red-Edge (CIrededge),Derived,Sentinel-2 (GEE),COPERNICUS/S4,"CIre = (NIR / RedEdge) − 1 (e.g., B8/B5 − 1). Tracks canopy chlorophyll; robust for stress detection. "
 RVI (Radar Vegetation Index),Derived,Sentinel-1 (GEE),COPERNICUS/S1_GRD,"RVI = 4·VH / (VV + VH) from calibrated σº VV,VH. Useful SAR proxy for structure/biomass without optical data."
 Gross Primary Productivity (GPP),Gpp,MOD17A2H(MODIS),MODIS/061/MOD17A2H,MODIS GPP (500 m) cumulative 8-day product; photosynthetic productivity linked to yield.
-Vegetation Condition Index (VCI),Derived ,MOD13Q1(MODIS),MODIS/061/MOD13Q1,VCI = (NDVI_current - NDVI_min) / (NDVI_max - NDVI_min); helpful in monitoring sugarcane health and yield status ResearchGate
+Vegetation Condition Index (VCI),Derived ,MOD13Q1(MODIS),MODIS/061/MOD13Q1,VCI = (NDVI_current – NDVI_min) / (NDVI_max – NDVI_min); helpful in monitoring sugarcane health and yield status ResearchGate
 S1 VV/VH ratio (linear σ⁰),Derived,Sentinel-1 (GEE),COPERNICUS/S1_GRD,"Compute from linear backscatter within the harvest window: VV_lin = 10^(VV_dB/10), VH_lin = 10^(VH_dB/10), VV/VH ratio = VV_lin / VH_lin. Useful for canopy structure/moisture."

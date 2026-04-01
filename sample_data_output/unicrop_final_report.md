@@ -71,7 +71,7 @@ This report summarizes a production-hardened, generalizable base with strict sch
 - DTR_min
 
 ## Cross-Validation Results
-| Model | RMSE | MAE | R² | WAPE |
+| Model | RMSE | MAE | R² | MAPE |
 |-------|------|-----|----|------|
 | LightGBM | 1243.0463 | 931.5209 | 0.8834 | 10.05% |
 | RandomForest | 1310.4038 | 928.1376 | 0.8705 | 10.01% |
@@ -92,4 +92,4 @@ This report summarizes a production-hardened, generalizable base with strict sch
 - Monitor PSI on top features and re-train if PSI > 0.2 or performance degrades >10%.
 
 ---
-*Report generated on 2026-04-01 22:17:32*
+*Report generated on 2025-12-28 23:18:29*

@@ -47,23 +47,37 @@ All required environmental variables are defined in a human-readable **feature m
 ---
 
 ## 📂 Repository Structure
-```
+```text
 unicrop/
 │
 ├── unicrop_main.py # Main pipeline execution script
-├── pipeline.py # Data acquisition and harmonisation
-├── modeller.py # Feature engineering, selection, modelling
-├── config.py # Pipeline and model configuration
+├── requirements.txt # Python package details
+├── requirements_optional.txt # Optional package imports
+├── README - FOR NEW DATA USAGE.md
 │
-├── unicrop_feature_mapping.csv # Declarative feature specification
-├── Rice_Crop_Data_challenge.csv # Example input dataset
+├── source_codes/
+│ ├── pipeline.py # Data acquisition and harmonisation
+│ ├── modeller.py # Feature engineering, selection, modelling
+│ ├── config.py # Pipeline and model configuration
+│ ├── paths.py # Folder details for data, sources, etc.
+│ └── sources.py # Additional source codes
 │
-├── output/
-│ ├── fetch_plan.csv
+├── data/
+│ └── sample_data.csv
+│
+├── source_files/
+│ ├── cleaned_feature_mapping.csv # Declarative feature specification
+│ ├── cleaned_input_table.csv
+│ ├── unicrop_feature_mapping.csv
+│ └── fetch_plan.csv
+│
+├── sample_data_output/
 │ ├── unicrop_master_timeseries.csv
 │ ├── unicrop_columns_manifest.csv
 │ ├── unicrop_model_artifacts1.pkl
-│ └── unicrop_visualisation_data.pkl
+│ ├── unicrop_final_report.md
+│ ├── unicrop_figures/ # Folder storing figures saved from sample_data.csv modelling
+│ │ └── ...
 │
 └── README.md
 ```
@@ -110,13 +124,17 @@ python unicrop_main.py
 ```
 
 This will:
- - Clean and validate field-level input data
- - Generate an automated fetch plan
- - Download and harmonise multi-source environmental data
- - Engineer agronomic features
- - Perform statistical screening and mRMR feature selection
- - Train baseline models and ensemble
- - Export modelling artefacts and visualisation data
+ - Downloading Stage (runs only ONCE for a new dataset)
+   - Clean and validate field-level input data
+   - Generate an automated fetch plan
+   - Download and harmonise multi-source environmental data
+   - Engineer agronomic features
+ - Modelling Stage
+   - Perform statistical screening and mRMR feature selection
+   - Train baseline models and ensemble
+   - Export modelling artefacts and visualisation data
+
+*Currently, the folders include downloaded data for the `sample_data.csv`. When users run the script above, it will bypass **the Downloading Stage** above, and only run **the Modelling Stage** for performance and prediction outputs.*
 
 ---
 
@@ -125,20 +143,43 @@ This will:
 Key outputs include:
  - `unicrop_master_timeseries.csv` --> Harmonised multi-source dataset before feature selection
  - `unicrop_model_artifacts1.pkl` --> Trained models, selected features, feature families, ensemble weights
- - `unicrop_visualisation_data.pkl` --> Pre-processed data for generating figures and diagnostics
  - `unicrop_final_report.md` --> Summary of modelling results
 
 ---
 
 ## 📈 Case Study
 
-UniCrop was validated using a publicly available rice yield dataset (557 field parcels) from southwest Vietnam.
+### Public Crop Yield Case Study (Spain – Maize)
 
-The case study demonstrates that UniCrop produces high-quality, interpretable predictors that support reliable baseline yield modelling without manual data engineering.
+For the open-source release on GitHub, UniCrop is demonstrated using a **publicly available maize yield dataset from Spain**, sourced from the Wageningen University & Research (WUR) AI sample data repository:
+
+🔗 https://github.com/WUR-AI/sample_data/tree/main
+
+The dataset contains annual maize yield observations aggregated at the regional level, along with location identifiers that can be linked to geographic coordinates. To align with UniCrop’s temporal modelling assumptions and satellite data availability, we **subsample the dataset to include harvest years from 2010 onwards**. The processed data used in this repository is provided in the `data/` directory.
+
+### Purpose of the Case Study
+
+This case study demonstrates that:
+
+- UniCrop can be executed entirely using **public, non-proprietary agricultural datasets**
+- Annual (year-level) harvest information can be integrated using UniCrop’s **date-anchoring strategy**
+- Automated data pipelines produce **consistent and interpretable environmental predictors** from NASA POWER, Sentinel-2, MODIS, and SRTM
+- The resulting features support **robust baseline yield modelling** without manual data engineering
+
+### Scope and Limitations
+
+The Spain maize example is intended as a **methodological demonstration**, not as a claim of state-of-the-art crop yield prediction performance. Model accuracy depends on data availability, spatial resolution, and management information, which may be limited in public datasets.
+
+Nevertheless, the case study highlights UniCrop’s key strengths:
+
+- Reproducible data acquisition  
+- Transparent feature construction  
+- Modular modelling and benchmarking  
+- Suitability for comparative and exploratory crop-yield analysis  
 
 ---
 
-## 📄 Related Publication
+## 📄 Related Publication and Citation
 
 If you use UniCrop in your research, please cite:
 
@@ -202,3 +243,5 @@ This repository reflects the original MSc research work, released in the interes
 ## 🏁 License
 
 This project is released under the MIT License.
+
+
